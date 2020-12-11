@@ -11,11 +11,6 @@
 
 * Join my Discord today to report any issues: https://discord.gg/64kVRNzKnF
 
-## Dependencies
-### which are required in order to install SettingsButtons:
-
-* Cephei Tweak Support - `https://repo.chariz.com`
-
 
 ### Follow
 
