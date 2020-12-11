@@ -1,5 +1,5 @@
-Package: com.nahtedetihw.settingsbutton
-Name: SettingsButton
+Package: com.nahtedetihw.settingsbuttons
+Name: SettingsButtons
 Version: 1.0
 Architecture: iphoneos-arm
 Description: Buttons for Settings NavBar!

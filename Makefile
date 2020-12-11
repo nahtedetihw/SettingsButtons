@@ -6,11 +6,11 @@ FINALPACKAGE = 1
 
 include $(THEOS)/makefiles/common.mk
 
-TWEAK_NAME = SettingsButton
+TWEAK_NAME = SettingsButtons
 
-SettingsButton_FILES = Tweak.xm
-SettingsButton_CFLAGS = -fobjc-arc
-SettingsButton_FRAMEWORKS = UIKit
+SettingsButtons_FILES = Tweak.xm
+SettingsButtons_CFLAGS = -fobjc-arc
+SettingsButtons_FRAMEWORKS = UIKit
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
