@@ -7,10 +7,12 @@
 
 ### SettingsButtons is compatible with iOS 13 and iOS 14.
 
-** SettingsButtons gives a useful way of toggling dark mode, safe mode, or respring stright from settings, with a very clean look **
+** SettingsButtons gives a useful way of toggling dark mode, safe mode, or respring straight from settings, with a very clean look **
 
 * Join my Discord today to report any issues: https://discord.gg/64kVRNzKnF
 
+### Source Code
+https://github.com/nahtedetihw/SettingsButtons
 
 ### Follow
 
