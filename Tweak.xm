@@ -72,27 +72,41 @@
 
 %new
 -(void)safeMode:(UIButton *)sender {
+    
+    UIAlertController *showID = [UIAlertController alertControllerWithTitle:@"Safe Mode" message:@"Are you sure you want to enter Safe Mode?" preferredStyle:UIAlertControllerStyleAlert];
+        
+    UIAlertAction *actionOK = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^ (UIAlertAction *_Nonnull action) {
 
     AudioServicesPlaySystemSound(1521);
 
     pid_t pid;
     const char *args[] = {"killall", "-SEGV", "SpringBoard", NULL};
     posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char * const *)args, NULL);
+    }];
+        
+    [showID addAction:actionOK];
+            
+    UIAlertAction *actionCancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^ (UIAlertAction *_Nonnull action) {
+    }];
+    [showID addAction:actionCancel];
+
+    [self presentViewController:showID animated:YES completion:nil];
 }
 
 %new
 - (void)darkMode:(UIButton *)sender {
     
     AudioServicesPlaySystemSound(1521);
-    
-    BOOL darkEnabled = ([UITraitCollection currentTraitCollection].userInterfaceStyle == UIUserInterfaceStyleDark);
-    
-    UISUserInterfaceStyleMode *styleMode = [[%c(UISUserInterfaceStyleMode) alloc] init];
-    if (darkEnabled) {
-        styleMode.modeValue = 1;
-    } else if (!darkEnabled)  {
-        styleMode.modeValue = 2;
-    }
+        
+        BOOL darkEnabled = ([UITraitCollection currentTraitCollection].userInterfaceStyle == UIUserInterfaceStyleDark);
+        
+        UISUserInterfaceStyleMode *styleMode = [[%c(UISUserInterfaceStyleMode) alloc] init];
+        if (darkEnabled) {
+            styleMode.modeValue = 1;
+        } else if (!darkEnabled)  {
+            styleMode.modeValue = 2;
+        }
+
 }
 
 %end
