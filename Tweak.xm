@@ -8,9 +8,8 @@
 - (void)darkMode:(UIButton *)sender;
 @end
 
-@interface UIUserInterfaceStyleArbiter : NSObject
-+ (id)sharedInstance;
-- (void)toggleCurrentStyleWithOverrideTiming:(long long)arg1;
+@interface UISUserInterfaceStyleMode : NSObject
+@property (nonatomic, assign) long long modeValue;
 @end
 
 @interface UIColor (Private)
@@ -85,9 +84,15 @@
 - (void)darkMode:(UIButton *)sender {
     
     AudioServicesPlaySystemSound(1521);
-
-    [[%c(UIUserInterfaceStyleArbiter) sharedInstance] toggleCurrentStyleWithOverrideTiming:2];
     
+    BOOL darkEnabled = ([UITraitCollection currentTraitCollection].userInterfaceStyle == UIUserInterfaceStyleDark);
+    
+    UISUserInterfaceStyleMode *styleMode = [[%c(UISUserInterfaceStyleMode) alloc] init];
+    if (darkEnabled) {
+        styleMode.modeValue = 1;
+    } else if (!darkEnabled)  {
+        styleMode.modeValue = 2;
+    }
 }
 
 %end
