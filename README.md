@@ -11,6 +11,8 @@
 
 * Join my Discord today to report any issues: https://discord.gg/64kVRNzKnF
 
+### Source Code
+https://github.com/nahtedetihw/SettingsButton
 
 ### Follow
 
