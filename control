@@ -1,0 +1,9 @@
+Package: com.nahtedetihw.settingsbutton
+Name: SettingsButton
+Version: 1.0
+Architecture: iphoneos-arm
+Description: Buttons for Settings NavBar!
+Maintainer: Ethan Whited
+Author: Ethan Whited
+Section: Tweaks
+Depends: mobilesubstrate (>= 0.9.5000)
