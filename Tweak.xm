@@ -2,8 +2,17 @@
 #import <AudioToolbox/AudioServices.h>
 #import <spawn.h>
 
-@interface PSUIPrefsListController : UINavigationController
+UIViewController *respringPopController;
+UIBarButtonItem *respringButtonItem;
+UIViewController *safeModePopController;
+UIBarButtonItem *safeModeButtonItem;
+
+@interface PSUIPrefsListController : UIViewController<UIPopoverPresentationControllerDelegate>
+- (void)respringYesGesture:(UIButton *)sender;
+- (void)respringNoGesture:(UIButton *)sender;
 - (void)respring:(UIButton *)sender;
+- (void)safeModeYesGesture:(UIButton *)sender;
+- (void)safeModeNoGesture:(UIButton *)sender;
 - (void)safeMode:(UIButton *)sender;
 - (void)darkMode:(UIButton *)sender;
 @end
@@ -17,6 +26,11 @@
 @end
 
 %hook PSUIPrefsListController
+- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller {
+
+    return UIModalPresentationNone;
+}
+
 - (void)viewDidLoad {
     %orig;
     
@@ -29,7 +43,7 @@
     [respringButton addTarget:self action:@selector(respring:) forControlEvents:UIControlEventTouchUpInside];
     respringButton.tintColor = [UIColor labelColor];
     
-    UIBarButtonItem *respringButtonItem = [[UIBarButtonItem alloc] initWithCustomView:respringButton];
+    respringButtonItem = [[UIBarButtonItem alloc] initWithCustomView:respringButton];
     
     UIButton *safeModeButton =  [UIButton buttonWithType:UIButtonTypeCustom];
     safeModeButton.frame = CGRectMake(0,0,30,30);
@@ -40,7 +54,7 @@
     [safeModeButton addTarget:self action:@selector(safeMode:) forControlEvents:UIControlEventTouchUpInside];
     safeModeButton.tintColor = [UIColor labelColor];
     
-    UIBarButtonItem *safeModeButtonItem = [[UIBarButtonItem alloc] initWithCustomView:safeModeButton];
+    safeModeButtonItem = [[UIBarButtonItem alloc] initWithCustomView:safeModeButton];
     
     UIButton *darkModeButton =  [UIButton buttonWithType:UIButtonTypeCustom];
     darkModeButton.frame = CGRectMake(0,0,30,30);
@@ -64,33 +78,120 @@
 
 %new
 - (void)respring:(UIButton *)sender {
+    
+    respringPopController = [[UIViewController alloc] init];
+    respringPopController.modalPresentationStyle = UIModalPresentationPopover;
+    respringPopController.preferredContentSize = CGSizeMake(200,130);
+
+    UILabel *respringLabel = [[UILabel alloc] init];
+    respringLabel.frame = CGRectMake(10, 20, 180, 60);
+    respringLabel.numberOfLines = 0;
+    respringLabel.textAlignment = NSTextAlignmentCenter;
+    respringLabel.font = [UIFont boldSystemFontOfSize:20];
+    respringLabel.textColor = [UIColor labelColor];
+    respringLabel.text = @"Are you sure you want to respring?";
+    [respringPopController.view addSubview:respringLabel];
+    
+    UIButton *respringYesButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [respringYesButton addTarget:self
+                  action:@selector(respringYesGesture:)
+     forControlEvents:UIControlEventTouchUpInside];
+    [respringYesButton setTitle:@"Yes" forState:UIControlStateNormal];
+    [respringYesButton setTitleColor:[UIColor labelColor] forState:UIControlStateNormal];
+    respringYesButton.frame = CGRectMake(100, 100, 100, 30);
+    [respringPopController.view addSubview:respringYesButton];
+    
+    UIButton *respringNoButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [respringNoButton addTarget:self
+                  action:@selector(respringNoGesture:)
+     forControlEvents:UIControlEventTouchUpInside];
+    [respringNoButton setTitle:@"No" forState:UIControlStateNormal];
+    [respringNoButton setTitleColor:[UIColor labelColor] forState:UIControlStateNormal];
+    respringNoButton.frame = CGRectMake(0, 100, 100, 30);
+    [respringPopController.view addSubview:respringNoButton];
+     
+    UIPopoverPresentationController *respringPopover = respringPopController.popoverPresentationController;
+    respringPopover.delegate = self;
+    respringPopover.permittedArrowDirections = UIPopoverArrowDirectionUp;
+    respringPopover.barButtonItem = respringButtonItem;
+    // you can replace the barButtonItem with the below two methods to anchor the popover to a different view
+    //popover.sourceView = sender;
+    //popover.sourceRect = CGRectMake(0, 0, sender.frame.size.width, sender.frame.size.height);
+    
+    [self presentViewController:respringPopController animated:YES completion:nil];
+}
+
+%new
+- (void)respringYesGesture:(UIButton *)sender {
     AudioServicesPlaySystemSound(1521);
+
     pid_t pid;
     const char* args[] = {"killall", "SpringBoard", NULL};
     posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const*)args, NULL);
 }
 
 %new
--(void)safeMode:(UIButton *)sender {
-    
-    UIAlertController *showID = [UIAlertController alertControllerWithTitle:@"Safe Mode" message:@"Are you sure you want to enter Safe Mode?" preferredStyle:UIAlertControllerStyleAlert];
-        
-    UIAlertAction *actionOK = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^ (UIAlertAction *_Nonnull action) {
+- (void)respringNoGesture:(UIButton *)sender {
+    [respringPopController dismissViewControllerAnimated:YES completion:nil];
+}
 
+%new
+- (void)safeMode:(UIButton *)sender {
+    
+    safeModePopController = [[UIViewController alloc] init];
+    safeModePopController.modalPresentationStyle = UIModalPresentationPopover;
+    safeModePopController.preferredContentSize = CGSizeMake(200,130);
+    
+    UILabel *safeModeLabel = [[UILabel alloc] init];
+    safeModeLabel.frame = CGRectMake(20, 20, 160, 60);
+    safeModeLabel.numberOfLines = 0;
+    safeModeLabel.textAlignment = NSTextAlignmentCenter;
+    safeModeLabel.font = [UIFont boldSystemFontOfSize:20];
+    safeModeLabel.textColor = [UIColor labelColor];
+    safeModeLabel.text = @"Are you sure you want to enter Safe Mode?";
+    [safeModePopController.view addSubview:safeModeLabel];
+    
+    UIButton *safeModeYesButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [safeModeYesButton addTarget:self
+                  action:@selector(safeModeYesGesture:)
+     forControlEvents:UIControlEventTouchUpInside];
+    [safeModeYesButton setTitle:@"Yes" forState:UIControlStateNormal];
+    [safeModeYesButton setTitleColor:[UIColor labelColor] forState:UIControlStateNormal];
+    safeModeYesButton.frame = CGRectMake(100, 100, 100, 30);
+    [safeModePopController.view addSubview:safeModeYesButton];
+    
+    UIButton *safeModeNoButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [safeModeNoButton addTarget:self
+                  action:@selector(safeModeNoGesture:)
+     forControlEvents:UIControlEventTouchUpInside];
+    [safeModeNoButton setTitle:@"No" forState:UIControlStateNormal];
+    [safeModeNoButton setTitleColor:[UIColor labelColor] forState:UIControlStateNormal];
+    safeModeNoButton.frame = CGRectMake(0, 100, 100, 30);
+    [safeModePopController.view addSubview:safeModeNoButton];
+     
+    UIPopoverPresentationController *safeModePopover = safeModePopController.popoverPresentationController;
+    safeModePopover.delegate = self;
+    safeModePopover.permittedArrowDirections = UIPopoverArrowDirectionUp;
+    safeModePopover.barButtonItem = safeModeButtonItem;
+    // you can replace the barButtonItem with the below two methods to anchor the popover to a different view
+    //safeModePopover.sourceView = sender;
+    //safeModePopover.sourceRect = CGRectMake(0, 0, sender.frame.size.width, sender.frame.size.height);
+    
+    [self presentViewController:safeModePopController animated:YES completion:nil];
+}
+
+%new
+- (void)safeModeYesGesture:(UIButton *)sender {
     AudioServicesPlaySystemSound(1521);
 
     pid_t pid;
     const char *args[] = {"killall", "-SEGV", "SpringBoard", NULL};
     posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char * const *)args, NULL);
-    }];
-        
-    [showID addAction:actionOK];
-            
-    UIAlertAction *actionCancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^ (UIAlertAction *_Nonnull action) {
-    }];
-    [showID addAction:actionCancel];
+}
 
-    [self presentViewController:showID animated:YES completion:nil];
+%new
+- (void)safeModeNoGesture:(UIButton *)sender {
+    [safeModePopController dismissViewControllerAnimated:YES completion:nil];
 }
 
 %new
