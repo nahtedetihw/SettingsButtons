@@ -16,8 +16,6 @@ SettingsButtons_FRAMEWORKS = UIKit
 SettingsButtons_EXTRA_FRAMEWORKS += Cephei
 SettingsButtons_LIBRARIES += sparkcolourpicker
 
-SUBPROJECTS += settingsbuttonsprefs
-
 include $(THEOS_MAKE_PATH)/tweak.mk
 
 after-install::
