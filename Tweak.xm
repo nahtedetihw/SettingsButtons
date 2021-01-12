@@ -1,85 +1,54 @@
-#import "Tweak.h"
+#import <Cephei/HBPreferences.h>
+#import <HBLog.h>
+#import "SparkColourPickerUtils.h"
+#import "SparkColourPickerView.h"
+#import <UIKit/UIKit.h>
+#import <AudioToolbox/AudioServices.h>
+#import <spawn.h>
 
-%group SettingsButtons
+UIViewController *respringPopController;
+UIBarButtonItem *respringButtonItem;
+UIButton *respringButton;
+UIViewController *safeModePopController;
+UIBarButtonItem *safeModeButtonItem;
 
+@interface RespringViewController : UIViewController <UIPopoverPresentationControllerDelegate>
+@end
 
-UIColor *respringTintDynamicColor = [UIColor colorWithDynamicProvider:^UIColor *(UITraitCollection *traitCollection) {
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"respringButtonTintColorDark"] withFallback:@"#FFFFFF"];
-    }
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleLight) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"respringButtonTintColorLight"] withFallback:@"#000000"];
-    }
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleUnspecified) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"respringButtonTintColorDark"] withFallback:@"#FFFFFF"];
-    }
-    return [UIColor labelColor];
-}];
+@implementation RespringViewController
+- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller
+traitCollection:(UITraitCollection *)traitCollection {
+    return UIModalPresentationNone;
+}
+@end
 
-UIColor *respringBackgroundDynamicColor = [UIColor colorWithDynamicProvider:^UIColor *(UITraitCollection *traitCollection) {
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"respringButtonBackgroundColorDark"] withFallback:@"#000000"];
-    }
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleLight) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"respringButtonBackgroundColorLight"] withFallback:@"#FFFFFF"];
-    }
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleUnspecified) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"respringButtonBackgroundColorDark"] withFallback:@"#000000"];
-    }
-    return [UIColor tableCellGroupedBackgroundColor];
-}];
+@interface SafeModeViewController : UIViewController <UIPopoverPresentationControllerDelegate>
+@end
 
-UIColor *safeModeTintDynamicColor = [UIColor colorWithDynamicProvider:^UIColor *(UITraitCollection *traitCollection) {
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"safeModeButtonTintColorDark"] withFallback:@"#FFFFFF"];
-    }
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleLight) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"safeModeButtonTintColorLight"] withFallback:@"#000000"];
-    }
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleUnspecified) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"safeModeButtonTintColorDark"] withFallback:@"#FFFFFF"];
-    }
-    return [UIColor labelColor];
-}];
+@implementation SafeModeViewController
+- (UIModalPresentationStyle)adaptivePresentationStyleForPresentationController:(UIPresentationController *)controller
+traitCollection:(UITraitCollection *)traitCollection {
+    return UIModalPresentationNone;
+}
+@end
 
-UIColor *safeModeBackgroundDynamicColor = [UIColor colorWithDynamicProvider:^UIColor *(UITraitCollection *traitCollection) {
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"safeModeButtonBackgroundColorDark"] withFallback:@"#000000"];
-    }
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleLight) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"safeModeButtonBackgroundColorLight"] withFallback:@"#FFFFFF"];
-    }
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleUnspecified) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"safeModeButtonBackgroundColorDark"] withFallback:@"#000000"];
-    }
-    return [UIColor tableCellGroupedBackgroundColor];
-}];
+@interface PSUIPrefsListController : UIViewController
+- (void)respringYesGesture:(UIButton *)sender;
+- (void)respringNoGesture:(UIButton *)sender;
+- (void)respring:(UIButton *)sender;
+- (void)safeModeYesGesture:(UIButton *)sender;
+- (void)safeModeNoGesture:(UIButton *)sender;
+- (void)safeMode:(UIButton *)sender;
+- (void)darkMode:(UIButton *)sender;
+@end
 
-UIColor *darkModeTintDynamicColor = [UIColor colorWithDynamicProvider:^UIColor *(UITraitCollection *traitCollection) {
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"darkModeButtonTintColorDark"] withFallback:@"#FFFFFF"];
-    }
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleLight) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"darkModeButtonTintColorLight"] withFallback:@"#000000"];
-    }
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleUnspecified) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"darkModeButtonTintColorDark"] withFallback:@"#FFFFFF"];
-    }
-    return [UIColor labelColor];
-}];
+@interface UISUserInterfaceStyleMode : NSObject
+@property (nonatomic, assign) long long modeValue;
+@end
 
-UIColor *darkModeBackgroundDynamicColor = [UIColor colorWithDynamicProvider:^UIColor *(UITraitCollection *traitCollection) {
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"darkModeButtonBackgroundColorDark"] withFallback:@"#000000"];
-    }
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleLight) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"darkModeButtonBackgroundColorLight"] withFallback:@"#FFFFFF"];
-    }
-    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleUnspecified) {
-        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"darkModeButtonBackgroundColorDark"] withFallback:@"#000000"];
-    }
-    return [UIColor tableCellGroupedBackgroundColor];
-}];
+@interface UIColor (Private)
++ (id)tableCellGroupedBackgroundColor;
+@end
 
 
 %hook PSUIPrefsListController
@@ -92,30 +61,13 @@ UIColor *darkModeBackgroundDynamicColor = [UIColor colorWithDynamicProvider:^UIC
     respringButton.layer.cornerRadius = respringButton.frame.size.height / 2;
     respringButton.layer.masksToBounds = YES;
     
-    if (enableCustomColors) {
-        respringButton.backgroundColor = respringBackgroundDynamicColor;
-    } else {
-        respringButton.backgroundColor = [UIColor tableCellGroupedBackgroundColor];
-    }
+    respringButton.backgroundColor = [UIColor tableCellGroupedBackgroundColor];
     
     [respringButton setImage:[UIImage systemImageNamed:@"staroflife.fill"] forState:UIControlStateNormal];
     
-    // 0=NoPopovers 1=RespringOnly 2=SafeModeOnly 3=Both
-    if (popoverConfirmationStyle == 0) {
-        [respringButton addTarget:self action:@selector(respringYesGesture:) forControlEvents:UIControlEventTouchUpInside];
-    } else if (popoverConfirmationStyle == 1) {
-        [respringButton addTarget:self action:@selector(respring:) forControlEvents:UIControlEventTouchUpInside];
-    } else if (popoverConfirmationStyle == 2) {
-        [respringButton addTarget:self action:@selector(respringYesGesture:) forControlEvents:UIControlEventTouchUpInside];
-    } else if (popoverConfirmationStyle == 1) {
-        [respringButton addTarget:self action:@selector(respring:) forControlEvents:UIControlEventTouchUpInside];
-    }
+    [respringButton addTarget:self action:@selector(respring:) forControlEvents:UIControlEventTouchUpInside];
     
-    if (enableCustomColors) {
-        respringButton.tintColor = respringTintDynamicColor;
-    } else {
     respringButton.tintColor = [UIColor labelColor];
-    }
     
     respringButtonItem = [[UIBarButtonItem alloc] initWithCustomView:respringButton];
     
@@ -123,31 +75,14 @@ UIColor *darkModeBackgroundDynamicColor = [UIColor colorWithDynamicProvider:^UIC
     safeModeButton.frame = CGRectMake(0,0,30,30);
     safeModeButton.layer.cornerRadius = safeModeButton.frame.size.height / 2;
     safeModeButton.layer.masksToBounds = YES;
-    
-    if (enableCustomColors) {
-        safeModeButton.backgroundColor = safeModeBackgroundDynamicColor;
-    } else {
-        safeModeButton.backgroundColor = [UIColor tableCellGroupedBackgroundColor];
-    }
+
+    safeModeButton.backgroundColor = [UIColor tableCellGroupedBackgroundColor];
 
     [safeModeButton setImage:[UIImage systemImageNamed:@"exclamationmark.shield.fill"] forState:UIControlStateNormal];
     
-    // 0=NoPopovers 1=RespringOnly 2=SafeModeOnly 3=Both
-    if (popoverConfirmationStyle == 0) {
-        [safeModeButton addTarget:self action:@selector(safeModeYesGesture:) forControlEvents:UIControlEventTouchUpInside];
-    } else if (popoverConfirmationStyle == 1) {
-        [safeModeButton addTarget:self action:@selector(safeModeYesGesture:) forControlEvents:UIControlEventTouchUpInside];
-    } else if (popoverConfirmationStyle == 2) {
-        [safeModeButton addTarget:self action:@selector(safeMode:) forControlEvents:UIControlEventTouchUpInside];
-    } else if (popoverConfirmationStyle == 1) {
-        [safeModeButton addTarget:self action:@selector(safeMode:) forControlEvents:UIControlEventTouchUpInside];
-    }
-    
-    if (enableCustomColors) {
-        safeModeButton.tintColor = safeModeTintDynamicColor;
-    } else {
-        safeModeButton.tintColor = [UIColor labelColor];
-    }
+    [safeModeButton addTarget:self action:@selector(safeMode:) forControlEvents:UIControlEventTouchUpInside];
+
+    safeModeButton.tintColor = [UIColor labelColor];
     
     safeModeButtonItem = [[UIBarButtonItem alloc] initWithCustomView:safeModeButton];
     
@@ -155,21 +90,13 @@ UIColor *darkModeBackgroundDynamicColor = [UIColor colorWithDynamicProvider:^UIC
     darkModeButton.frame = CGRectMake(0,0,30,30);
     darkModeButton.layer.cornerRadius = darkModeButton.frame.size.height / 2;
     darkModeButton.layer.masksToBounds = YES;
-    
-    if (enableCustomColors) {
-        darkModeButton.backgroundColor = darkModeBackgroundDynamicColor;
-    } else {
-        darkModeButton.backgroundColor = [UIColor tableCellGroupedBackgroundColor];
-    }
+
+    darkModeButton.backgroundColor = [UIColor tableCellGroupedBackgroundColor];
 
     [darkModeButton setImage:[UIImage systemImageNamed:@"circle.righthalf.fill"] forState:UIControlStateNormal];
     [darkModeButton addTarget:self action:@selector(darkMode:) forControlEvents:UIControlEventTouchUpInside];
     
-    if (enableCustomColors) {
-        darkModeButton.tintColor = darkModeTintDynamicColor;
-    } else {
-        darkModeButton.tintColor = [UIColor labelColor];
-    }
+    darkModeButton.tintColor = [UIColor labelColor];
     
     UIBarButtonItem *darkModeButtonItem = [[UIBarButtonItem alloc] initWithCustomView:darkModeButton];
     
@@ -323,26 +250,3 @@ UIColor *darkModeBackgroundDynamicColor = [UIColor colorWithDynamicProvider:^UIC
 }
 
 %end
-%end
-
-static void notificationCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
-    // Notification for colors
-    colorDictionary = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/private/var/mobile/Library/Preferences/com.nahtedetihw.settingsbuttonsprefs.color.plist"];
-}
-
-%ctor {
-    
-    notificationCallback(NULL, NULL, NULL, NULL, NULL);
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, notificationCallback, (CFStringRef)nsNotificationString, NULL, CFNotificationSuspensionBehaviorCoalesce);
-        
-    preferences = [[HBPreferences alloc] initWithIdentifier:@"com.nahtedetihw.settingsbuttonsprefs"];
-    [preferences registerBool:&enabled default:NO forKey:@"enabled"];
-    [preferences registerBool:&enableCustomColors default:NO forKey:@"enableCustomColors"];
-    [preferences registerInteger:&popoverConfirmationStyle default:0 forKey:@"popoverConfirmationStyle"];
-    
-    if (enabled) {
-        %init(SettingsButtons);
-        return;
-    }
-    return;
-}
