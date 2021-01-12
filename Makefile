@@ -1,6 +1,8 @@
 TARGET := iphone:clang:latest:13.0
 INSTALL_TARGET_PROCESSES = Preferences
 
+ARCHS = arm64 arm64e
+
 DEBUG = 0
 FINALPACKAGE = 1
 
@@ -9,8 +11,12 @@ include $(THEOS)/makefiles/common.mk
 TWEAK_NAME = SettingsButtons
 
 SettingsButtons_FILES = Tweak.xm
-SettingsButtons_CFLAGS = -fobjc-arc
+SettingsButtons_CFLAGS = -fobjc-arc -Wno-deprecated-declarations
 SettingsButtons_FRAMEWORKS = UIKit
+SettingsButtons_EXTRA_FRAMEWORKS += Cephei
+SettingsButtons_LIBRARIES += sparkcolourpicker
+
+SUBPROJECTS += settingsbuttonsprefs
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
