@@ -1,9 +1,9 @@
 Package: com.nahtedetihw.settingsbuttons
 Name: SettingsButtons
-Version: 1.3
+Version: 1.4
 Architecture: iphoneos-arm
 Description: Buttons for Settings NavBar!
 Maintainer: Ethan Whited
 Author: Ethan Whited
 Section: Tweaks
-Depends: mobilesubstrate, ws.hbang.common, com.spark.libsparkcolourpicker
+Depends: mobilesubstrate, ws.hbang.common, com.spark.libsparkcolourpicker, com.smokin1337.ldrestarthelper

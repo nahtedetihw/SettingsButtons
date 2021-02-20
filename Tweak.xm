@@ -12,6 +12,45 @@ UIViewController *respringPopController;
 UIViewController *safeModePopController;
 UIViewController *ldrestartPopController;
 UIViewController *lpmPopController;
+UIButton *darkModeButton;
+
+static NSMutableDictionary *colorDictionary;
+static NSString *nsNotificationString = @"com.nahtedetihw.settingsbuttonsprefs.color/changed";
+
+UIColor *tintDynamicColor = [UIColor colorWithDynamicProvider:^UIColor *(UITraitCollection *traitCollection) {
+    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"tintColorDark"] withFallback:@"#FFFFFF"];
+    }
+    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleLight) {
+        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"tintColorLight"] withFallback:@"#000000"];
+    }
+    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleUnspecified) {
+        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"tintColorDark"] withFallback:@"#FFFFFF"];
+    }
+    return [UIColor colorWithRed:255/255.0f green:255/255.0f blue:255/255.0f alpha:1.0f];
+}];
+
+UIColor *backgroundDynamicColor = [UIColor colorWithDynamicProvider:^UIColor *(UITraitCollection *traitCollection) {
+    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"backgroundColorDark"] withFallback:@"#000000"];
+    }
+    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleLight) {
+        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"backgroundColorLight"] withFallback:@"#FFFFFF"];
+    }
+    if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleUnspecified) {
+        return [SparkColourPickerUtils colourWithString:[colorDictionary objectForKey:@"backgroundColorDark"] withFallback:@"#000000"];
+    }
+    return [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:1.0f];
+}];
+
+HBPreferences *preferences;
+BOOL enable;
+BOOL enableLeftButtons;
+NSInteger colorStyle;
+NSInteger rightButtonStyle;
+NSInteger leftButtonStyle;
+
+%group SettingsButtons
 
 @interface RespringViewController : UIViewController <UIPopoverPresentationControllerDelegate>
 @end
@@ -90,13 +129,21 @@ traitCollection:(UITraitCollection *)traitCollection {
     respringButton.layer.cornerRadius = respringButton.frame.size.height / 2;
     respringButton.layer.masksToBounds = YES;
     
+    if (colorStyle == 0) {
     respringButton.backgroundColor = [UIColor tableCellGroupedBackgroundColor];
+    } else if (colorStyle == 1) {
+    respringButton.backgroundColor = backgroundDynamicColor;
+    }
     
     [respringButton setImage:[UIImage systemImageNamed:@"staroflife.fill"] forState:UIControlStateNormal];
     
     [respringButton addTarget:self action:@selector(respring:) forControlEvents:UIControlEventTouchUpInside];
     
+    if (colorStyle == 0) {
     respringButton.tintColor = [UIColor labelColor];
+    } else if (colorStyle == 1) {
+    respringButton.tintColor = tintDynamicColor;
+    }
     
     UIBarButtonItem *respringButtonItem = [[UIBarButtonItem alloc] initWithCustomView:respringButton];
     
@@ -104,50 +151,70 @@ traitCollection:(UITraitCollection *)traitCollection {
     safeModeButton.frame = CGRectMake(0,0,30,30);
     safeModeButton.layer.cornerRadius = safeModeButton.frame.size.height / 2;
     safeModeButton.layer.masksToBounds = YES;
-
+    
+    if (colorStyle == 0) {
     safeModeButton.backgroundColor = [UIColor tableCellGroupedBackgroundColor];
+    } else if (colorStyle == 1) {
+    safeModeButton.backgroundColor = backgroundDynamicColor;
+    }
 
     [safeModeButton setImage:[UIImage systemImageNamed:@"exclamationmark.shield.fill"] forState:UIControlStateNormal];
     
     [safeModeButton addTarget:self action:@selector(safeMode:) forControlEvents:UIControlEventTouchUpInside];
 
+    if (colorStyle == 0) {
     safeModeButton.tintColor = [UIColor labelColor];
+    } else if (colorStyle == 1) {
+    safeModeButton.tintColor = tintDynamicColor;
+    }
     
     UIBarButtonItem *safeModeButtonItem = [[UIBarButtonItem alloc] initWithCustomView:safeModeButton];
     
-    UIButton *darkModeButton =  [UIButton buttonWithType:UIButtonTypeCustom];
+    darkModeButton =  [UIButton buttonWithType:UIButtonTypeCustom];
     darkModeButton.frame = CGRectMake(0,0,30,30);
     darkModeButton.layer.cornerRadius = darkModeButton.frame.size.height / 2;
     darkModeButton.layer.masksToBounds = YES;
-
+    
+    if (colorStyle == 0) {
     darkModeButton.backgroundColor = [UIColor tableCellGroupedBackgroundColor];
+    } else if (colorStyle == 1) {
+    darkModeButton.backgroundColor = backgroundDynamicColor;
+    }
 
     [darkModeButton setImage:[UIImage systemImageNamed:@"circle.righthalf.fill"] forState:UIControlStateNormal];
     [darkModeButton addTarget:self action:@selector(darkMode:) forControlEvents:UIControlEventTouchUpInside];
     
+    if (colorStyle == 0) {
     darkModeButton.tintColor = [UIColor labelColor];
+    } else if (colorStyle == 1) {
+    darkModeButton.tintColor = tintDynamicColor;
+    }
     
     UIBarButtonItem *darkModeButtonItem = [[UIBarButtonItem alloc] initWithCustomView:darkModeButton];
     
     
     UIBarButtonItem *space = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:self action:nil];
     space.width = 2;
-
-    NSArray *rightButtons = @[space, respringButtonItem, space, safeModeButtonItem, space, darkModeButtonItem, space];
-    
-    self.navigationItem.rightBarButtonItems = rightButtons;
     
     UIButton *flashLightButton =  [UIButton buttonWithType:UIButtonTypeCustom];
     flashLightButton.frame = CGRectMake(0,0,30,30);
     flashLightButton.layer.cornerRadius = flashLightButton.frame.size.height / 2;
     flashLightButton.layer.masksToBounds = YES;
 
+    if (colorStyle == 0) {
     flashLightButton.backgroundColor = [UIColor tableCellGroupedBackgroundColor];
+    } else if (colorStyle == 1) {
+    flashLightButton.backgroundColor = backgroundDynamicColor;
+    }
 
     [flashLightButton setImage:[UIImage systemImageNamed:@"bolt.fill"] forState:UIControlStateNormal];
     [flashLightButton addTarget:self action:@selector(flashLight:) forControlEvents:UIControlEventTouchUpInside];
     
+    if (colorStyle == 0) {
     flashLightButton.tintColor = [UIColor labelColor];
+    } else if (colorStyle == 1) {
+    flashLightButton.tintColor = tintDynamicColor;
+    }
     
     UIBarButtonItem *flashLightButtonItem = [[UIBarButtonItem alloc] initWithCustomView:flashLightButton];
     
@@ -156,12 +223,20 @@ traitCollection:(UITraitCollection *)traitCollection {
     ldrestartButton.layer.cornerRadius = ldrestartButton.frame.size.height / 2;
     ldrestartButton.layer.masksToBounds = YES;
 
+    if (colorStyle == 0) {
     ldrestartButton.backgroundColor = [UIColor tableCellGroupedBackgroundColor];
+    } else if (colorStyle == 1) {
+    ldrestartButton.backgroundColor = backgroundDynamicColor;
+    }
 
     [ldrestartButton setImage:[UIImage systemImageNamed:@"exclamationmark.circle.fill"] forState:UIControlStateNormal];
     [ldrestartButton addTarget:self action:@selector(ldrestart:) forControlEvents:UIControlEventTouchUpInside];
     
+    if (colorStyle == 0) {
     ldrestartButton.tintColor = [UIColor labelColor];
+    } else if (colorStyle == 1) {
+    ldrestartButton.tintColor = tintDynamicColor;
+    }
     
     UIBarButtonItem *ldrestartButtonItem = [[UIBarButtonItem alloc] initWithCustomView:ldrestartButton];
     
@@ -170,18 +245,56 @@ traitCollection:(UITraitCollection *)traitCollection {
     lpmButton.layer.cornerRadius = lpmButton.frame.size.height / 2;
     lpmButton.layer.masksToBounds = YES;
 
+    if (colorStyle == 0) {
     lpmButton.backgroundColor = [UIColor tableCellGroupedBackgroundColor];
+    } else if (colorStyle == 1) {
+    lpmButton.backgroundColor = backgroundDynamicColor;
+    }
 
     [lpmButton setImage:[UIImage systemImageNamed:@"battery.25"] forState:UIControlStateNormal];
     [lpmButton addTarget:self action:@selector(lpm:) forControlEvents:UIControlEventTouchUpInside];
     
+    if (colorStyle == 0) {
     lpmButton.tintColor = [UIColor labelColor];
+    } else if (colorStyle == 1) {
+    lpmButton.tintColor = tintDynamicColor;
+    }
     
     UIBarButtonItem *lpmButtonItem = [[UIBarButtonItem alloc] initWithCustomView:lpmButton];
-
-    NSArray *leftButtons = @[space, lpmButtonItem, space, ldrestartButtonItem, space, flashLightButtonItem, space];
     
+    NSArray *rightButtons;
+    
+    if (rightButtonStyle == 0) {
+    rightButtons = @[space, respringButtonItem, space, safeModeButtonItem, space, darkModeButtonItem, space];
+    } else if (rightButtonStyle == 1) {
+    rightButtons = @[space, respringButtonItem, space, safeModeButtonItem, space, ldrestartButtonItem, space];
+    } else if (rightButtonStyle == 2) {
+    rightButtons = @[space, respringButtonItem, space, ldrestartButtonItem, space, darkModeButtonItem, space];
+    } else if (rightButtonStyle == 3) {
+    rightButtons = @[space, respringButtonItem, space, flashLightButtonItem, space, darkModeButtonItem, space];
+    } else if (rightButtonStyle == 4) {
+    rightButtons = @[space, respringButtonItem, space, flashLightButtonItem, space, safeModeButtonItem, space];
+    }
+    
+    self.navigationItem.rightBarButtonItems = rightButtons;
+
+    NSArray *leftButtons;
+    
+    if (leftButtonStyle == 0) {
+    leftButtons = @[space, lpmButtonItem, space, ldrestartButtonItem, space, flashLightButtonItem, space];
+    } else if (leftButtonStyle == 1) {
+    leftButtons = @[space, darkModeButtonItem, space, lpmButtonItem, space, flashLightButtonItem, space];
+    } else if (leftButtonStyle == 2) {
+    leftButtons = @[space, safeModeButtonItem, space, lpmButtonItem, space, flashLightButtonItem, space];
+    } else if (leftButtonStyle == 3) {
+    leftButtons = @[space, safeModeButtonItem, space, lpmButtonItem, space, ldrestartButtonItem, space];
+    } else if (leftButtonStyle == 3) {
+    leftButtons = @[space, darkModeButtonItem, space, lpmButtonItem, space, ldrestartButtonItem, space];
+    }
+    
+    if (enableLeftButtons) {
     self.navigationItem.leftBarButtonItems = leftButtons;
+    }
 }
 
 %new
@@ -320,8 +433,14 @@ traitCollection:(UITraitCollection *)traitCollection {
         UISUserInterfaceStyleMode *styleMode = [[%c(UISUserInterfaceStyleMode) alloc] init];
         if (darkEnabled) {
             styleMode.modeValue = 1;
+            [UIView animateWithDuration:1.0 delay:0 options:nil animations:^{
+                [darkModeButton setImage:[UIImage systemImageNamed:@"circle.righthalf.fill"] forState:UIControlStateNormal];
+            } completion:nil];
         } else if (!darkEnabled)  {
             styleMode.modeValue = 2;
+            [UIView animateWithDuration:1.0 delay:0 options:nil animations:^{
+                [darkModeButton setImage:[UIImage systemImageNamed:@"circle.lefthalf.fill"] forState:UIControlStateNormal];
+            } completion:nil];
         }
 }
 
@@ -458,11 +577,17 @@ traitCollection:(UITraitCollection *)traitCollection {
 %new
 - (void)lpmYesGesture:(UIButton *)sender {
     AudioServicesPlaySystemSound(1521);
-    
+    BOOL success = NO;
     if ([[%c(NSProcessInfo) processInfo] isLowPowerModeEnabled]) {
         [[%c(_CDBatterySaver) batterySaver] setPowerMode:0 error:nil];
+        success = YES;
     } else {
         [[%c(_CDBatterySaver) batterySaver] setPowerMode:1 error:nil];
+        success = YES;
+    }
+    
+    if (success == YES) {
+        [self dismissViewControllerAnimated:ldrestartPopController completion:nil];
     }
 }
 
@@ -471,3 +596,38 @@ traitCollection:(UITraitCollection *)traitCollection {
     [lpmPopController dismissViewControllerAnimated:YES completion:nil];
 }
 %end
+
+%hook UIApplication
+-(void)applicationWillSuspend {
+    %orig;
+    [self.keyWindow.rootViewController dismissViewControllerAnimated:respringPopController completion:nil];
+    [self.keyWindow.rootViewController dismissViewControllerAnimated:safeModePopController completion:nil];
+    [self.keyWindow.rootViewController dismissViewControllerAnimated:ldrestartPopController completion:nil];
+    [self.keyWindow.rootViewController dismissViewControllerAnimated:lpmPopController completion:nil];
+}
+%end
+
+%end
+
+static void notificationCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
+    // Notification for colors
+    colorDictionary = [[NSMutableDictionary alloc] initWithContentsOfFile:@"/private/var/mobile/Library/Preferences/com.nahtedetihw.settingsbuttonsprefs.color.plist"];
+}
+
+%ctor {
+    notificationCallback(NULL, NULL, NULL, NULL, NULL);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, notificationCallback, (CFStringRef)nsNotificationString, NULL, CFNotificationSuspensionBehaviorCoalesce);
+        
+    preferences = [[HBPreferences alloc] initWithIdentifier:@"com.nahtedetihw.settingsbuttonsprefs"];
+    [preferences registerBool:&enable default:NO forKey:@"enable"];
+    [preferences registerBool:&enableLeftButtons default:NO forKey:@"enableLeftButtons"];
+    [preferences registerInteger:&colorStyle default:0 forKey:@"colorStyle"];
+    [preferences registerInteger:&rightButtonStyle default:0 forKey:@"rightButtonStyle"];
+    [preferences registerInteger:&leftButtonStyle default:0 forKey:@"leftButtonStyle"];
+
+    if (enable) {
+        %init(SettingsButtons);
+        return;
+    }
+        return;
+}
