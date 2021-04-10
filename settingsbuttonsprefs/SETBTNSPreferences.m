@@ -202,7 +202,7 @@ UIViewController *popController;
     respringLabel.adjustsFontSizeToFitWidth = YES;
     respringLabel.font = [UIFont boldSystemFontOfSize:20];
     respringLabel.textColor = [UIColor labelColor];
-    respringLabel.text = @"Are you sure you want to respring?";
+    respringLabel.text = @"Kill Settings to Apply?";
     [popController.view addSubview:respringLabel];
     
     UIButton *yesButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -237,11 +237,15 @@ UIViewController *popController;
 }
 
 - (void)handleYesGesture:(UIButton *)sender {
-    AudioServicesPlaySystemSound(1521);
+    AudioServicesPlaySystemSound(1519);
 
-    pid_t pid;
+    UIApplication *app = [UIApplication sharedApplication];
+    [app performSelector:@selector(suspend)];
+    [NSThread sleepForTimeInterval:1.0];
+    exit(0); 
+    /* pid_t pid;
     const char* args[] = {"killall", "SpringBoard", NULL};
-    posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const*)args, NULL);
+    posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const*)args, NULL); */
 }
 
 - (void)handleNoGesture:(UIButton *)sender {
