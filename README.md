@@ -1,4 +1,4 @@
-![download](https://i.ibb.co/yVSFKKr/IMG-1718.jpg)
+![download](https://i.ibb.co/wds8v8M/banner.png)
 
 
 # SettingsButtons
