@@ -6,6 +6,10 @@ ARCHS = arm64 arm64e
 DEBUG = 0
 FINALPACKAGE = 1
 
+PREFIX=$(THEOS)/toolchain/Xcode.xctoolchain/usr/bin/
+
+SYSROOT=$(THEOS)/sdks/iphoneos14.0.sdk
+
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = SettingsButtons

@@ -2,6 +2,10 @@ ARCHS = arm64 arm64e
 
 include $(THEOS)/makefiles/common.mk
 
+PREFIX=$(THEOS)/toolchain/Xcode.xctoolchain/usr/bin/
+
+SYSROOT=$(THEOS)/sdks/iphoneos14.0.sdk
+
 BUNDLE_NAME = settingsbuttonsprefs
 settingsbuttonsprefs_FILES = SETBTNSPreferences.m
 settingsbuttonsprefs_INSTALL_PATH = /Library/PreferenceBundles

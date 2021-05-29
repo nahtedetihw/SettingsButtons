@@ -135,8 +135,9 @@ traitCollection:(UITraitCollection *)traitCollection {
     respringButton.backgroundColor = backgroundDynamicColor;
     }
     
-    [respringButton setImage:[UIImage systemImageNamed:@"staroflife.fill"] forState:UIControlStateNormal];
-    
+    [respringButton setImage:[[UIImage imageWithContentsOfFile:@"/Library/Application Support/SettingsButtons/respring.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    respringButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    respringButton.imageEdgeInsets = UIEdgeInsetsMake(-2,-2,-2,-2);
     [respringButton addTarget:self action:@selector(respring:) forControlEvents:UIControlEventTouchUpInside];
     
     if (colorStyle == 0) {
@@ -158,8 +159,9 @@ traitCollection:(UITraitCollection *)traitCollection {
     safeModeButton.backgroundColor = backgroundDynamicColor;
     }
 
-    [safeModeButton setImage:[UIImage systemImageNamed:@"exclamationmark.shield.fill"] forState:UIControlStateNormal];
-    
+    [safeModeButton setImage:[[UIImage imageWithContentsOfFile:@"/Library/Application Support/SettingsButtons/safemode.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    safeModeButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    safeModeButton.imageEdgeInsets = UIEdgeInsetsMake(-2,-2,-2,-2);
     [safeModeButton addTarget:self action:@selector(safeMode:) forControlEvents:UIControlEventTouchUpInside];
 
     if (colorStyle == 0) {
@@ -181,7 +183,8 @@ traitCollection:(UITraitCollection *)traitCollection {
     darkModeButton.backgroundColor = backgroundDynamicColor;
     }
 
-    [darkModeButton setImage:[UIImage systemImageNamed:@"circle.righthalf.fill"] forState:UIControlStateNormal];
+    [darkModeButton setImage:[[UIImage imageWithContentsOfFile:@"/Library/Application Support/SettingsButtons/lightmode.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    darkModeButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
     [darkModeButton addTarget:self action:@selector(darkMode:) forControlEvents:UIControlEventTouchUpInside];
     
     if (colorStyle == 0) {
@@ -207,7 +210,8 @@ traitCollection:(UITraitCollection *)traitCollection {
     flashLightButton.backgroundColor = backgroundDynamicColor;
     }
 
-    [flashLightButton setImage:[UIImage systemImageNamed:@"bolt.fill"] forState:UIControlStateNormal];
+    [flashLightButton setImage:[[UIImage imageWithContentsOfFile:@"/Library/Application Support/SettingsButtons/flashlight.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    flashLightButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
     [flashLightButton addTarget:self action:@selector(flashLight:) forControlEvents:UIControlEventTouchUpInside];
     
     if (colorStyle == 0) {
@@ -229,7 +233,8 @@ traitCollection:(UITraitCollection *)traitCollection {
     ldrestartButton.backgroundColor = backgroundDynamicColor;
     }
 
-    [ldrestartButton setImage:[UIImage systemImageNamed:@"exclamationmark.circle.fill"] forState:UIControlStateNormal];
+    [ldrestartButton setImage:[[UIImage imageWithContentsOfFile:@"/Library/Application Support/SettingsButtons/ldrestart.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    ldrestartButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
     [ldrestartButton addTarget:self action:@selector(ldrestart:) forControlEvents:UIControlEventTouchUpInside];
     
     if (colorStyle == 0) {
@@ -251,7 +256,8 @@ traitCollection:(UITraitCollection *)traitCollection {
     lpmButton.backgroundColor = backgroundDynamicColor;
     }
 
-    [lpmButton setImage:[UIImage systemImageNamed:@"battery.25"] forState:UIControlStateNormal];
+    [lpmButton setImage:[[UIImage imageWithContentsOfFile:@"/Library/Application Support/SettingsButtons/lowpower.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    lpmButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
     [lpmButton addTarget:self action:@selector(lpm:) forControlEvents:UIControlEventTouchUpInside];
     
     if (colorStyle == 0) {
@@ -351,8 +357,8 @@ traitCollection:(UITraitCollection *)traitCollection {
     AudioServicesPlaySystemSound(1521);
 
     pid_t pid;
-    const char* args[] = {"killall", "SpringBoard", NULL};
-    posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const*)args, NULL);
+    const char* args[] = {"sbreload", NULL};
+    posix_spawn(&pid, "/usr/bin/sbreload", NULL, NULL, (char* const*)args, NULL);
 }
 
 %new
@@ -434,12 +440,14 @@ traitCollection:(UITraitCollection *)traitCollection {
         if (darkEnabled) {
             styleMode.modeValue = 1;
             [UIView animateWithDuration:1.0 delay:0 options:nil animations:^{
-                [darkModeButton setImage:[UIImage systemImageNamed:@"circle.righthalf.fill"] forState:UIControlStateNormal];
+                [darkModeButton setImage:[[UIImage imageWithContentsOfFile:@"/Library/Application Support/SettingsButtons/darkmode.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+                darkModeButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
             } completion:nil];
         } else if (!darkEnabled)  {
             styleMode.modeValue = 2;
             [UIView animateWithDuration:1.0 delay:0 options:nil animations:^{
-                [darkModeButton setImage:[UIImage systemImageNamed:@"circle.lefthalf.fill"] forState:UIControlStateNormal];
+                [darkModeButton setImage:[[UIImage imageWithContentsOfFile:@"/Library/Application Support/SettingsButtons/lightmode.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+                darkModeButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
             } completion:nil];
         }
 }
